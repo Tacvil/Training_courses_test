@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Dialog -->
+    <dimen name="popup_offset_x">8dp</dimen>
+    <dimen name="popup_offset_y">8dp</dimen>
+
+    <!-- Filters -->
+    <dimen name="filter_card_margin">5dp</dimen>
+    <dimen name="filter_card_corner_radius">5dp</dimen>
+    <dimen name="filter_card_elevation">5dp</dimen>
+    <dimen name="filter_layout_padding">5dp</dimen>
+    <dimen name="filter_text_input_layout_margin_top">5dp</dimen>
+    <dimen name="filter_price_text_view_margin_start">2dp</dimen>
+    <dimen name="filter_price_text_view_margin_top">5dp</dimen>
+    <dimen name="filter_price_text_view_text_size">16sp</dimen>
+    <dimen name="filter_price_input_layout_margin_horizontal">2dp</dimen>
+    <dimen name="filter_button_margin_horizontal">5dp</dimen>
+    <dimen name="filter_button_margin_bottom">5dp</dimen>
+</resources>

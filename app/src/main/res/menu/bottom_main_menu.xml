@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="Аккаунт"
+        android:icon="@drawable/account"
+        android:iconTint="@color/color_selector"
+        android:titleTextColor="@color/color_selector"
+        android:id="@+id/id_account"
+        android:orderInCategory="300"
+        app:showAsAction="always" />
+
+    <item
+        android:title="Избранные"
+        android:icon="@drawable/flag1"
+        android:iconTint="@color/color_selector"
+        android:titleTextColor="@color/color_selector"
+        android:id="@+id/id_favs"
+        android:orderInCategory="200"
+        app:showAsAction="always"/>
+
+    <item
+        android:title="Главная"
+        android:icon="@drawable/home"
+        android:iconTint="@color/color_selector"
+        android:titleTextColor="@color/color_selector"
+        android:id="@+id/id_home"
+        android:orderInCategory="100"
+        app:showAsAction="always"/>
+
+</menu>

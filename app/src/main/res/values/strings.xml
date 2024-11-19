@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Training courses</string>
+
+    <!-- Filters -->
+    <string name="order_by_date_added">По дате добавления</string>
+    <string name="order_by_popularity">По популярности</string>
+    <string name="order_by_rating">По рейтингу</string>
+    <string name="filter_hint_category">Категория</string>
+    <string name="filter_hint_difficult">Сложность</string>
+    <string name="filter_hint_price">Цена</string>
+
+    <!-- Courses Category -->
+    <string name="category_android_development">Курсы по Android-разработке приложений</string>
+    <string name="category_ux_ui_design">UX/UI дизайн</string>
+    <string name="category_android">Android</string>
+    <string name="category_kotlin">Kotlin</string>
+    <string name="category_mobile_development">Мобильная разработка</string>
+    <string name="category_app_development">Разработка приложений</string>
+
+    <!-- Difficulty Levels -->
+    <string name="difficulty_easy">Для начинающих</string>
+    <string name="difficulty_medium">Для продолжающих</string>
+    <string name="difficulty_hard">Для профи</string>
+
+    <!-- Price -->
+    <string name="price_free">Бесплатно</string>
+    <string name="price_paid">Платано</string>
+    <string name="price_no_matter">Не важно</string>
+
+    <string name="course_duration">%d ч</string>
+</resources>

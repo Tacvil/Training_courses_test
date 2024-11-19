@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/mainFragment">
+
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.trainingCourses.presentation.activities.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.trainingCourses.presentation.fragment.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_filterFragment"
+            app:destination="@id/filterFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_descriptionFragment"
+            app:destination="@id/descriptionFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/filterFragment"
+        android:name="com.example.trainingCourses.presentation.fragment.FilterFragment"
+        android:label="FilterFragment" />
+    <fragment
+        android:id="@+id/descriptionFragment"
+        android:name="com.example.trainingCourses.presentation.fragment.DescriptionFragment"
+        android:label="DescriptionFragment" >
+    </fragment>
+</navigation>
