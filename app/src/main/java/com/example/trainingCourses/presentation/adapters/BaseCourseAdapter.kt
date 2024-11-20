@@ -1,8 +1,5 @@
 package com.example.trainingCourses.presentation.adapters
 
-import android.annotation.SuppressLint
-import android.icu.text.SimpleDateFormat
-import android.icu.util.Calendar
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,15 +7,12 @@ import androidx.annotation.RequiresApi
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.trainingCourses.R
 import com.example.trainingCourses.databinding.ItemCourseListBinding
 import com.example.trainingCourses.domain.model.Courses
 import com.example.trainingCourses.domain.ui.course.CourseItemClickListener
 import com.example.trainingCourses.presentation.utils.PagingCourseDiffCallback
-import com.example.trainingCourses.presentation.utils.TimeUtils
-import java.util.Locale
-import kotlin.text.isLowerCase
-import kotlin.text.replaceFirstChar
-import kotlin.text.titlecase
+import com.example.trainingCourses.domain.utils.TimeUtils
 
 
 abstract class BaseCourseAdapter<VH : BaseCourseAdapter.BaseCourseViewHolder>(
@@ -32,7 +26,8 @@ abstract class BaseCourseAdapter<VH : BaseCourseAdapter.BaseCourseViewHolder>(
             with(binding) {
                 textViewCourseTitle.text = courses.title
                 textViewCourseDescription.text = courses.summary
-                textViewCoursePrice.text = if(courses.display_price == "-") "Бесплатно" else courses.display_price
+                textViewCoursePrice.text =
+                    if (courses.display_price == "-") "Бесплатно" else courses.display_price
                 textViewCourseDate.text = courses.create_date?.let { TimeUtils.formatDate(it) }
                 textViewScoreValue.text = courses.score.toString()
 
@@ -41,9 +36,19 @@ abstract class BaseCourseAdapter<VH : BaseCourseAdapter.BaseCourseViewHolder>(
                     .load(courses.cover)
                     .into(imageViewCourseCover)
 
+                val drawableResId = if (courses.isFavorite) {
+                    R.drawable.ic_flag_fill_green
+                } else {
+                    R.drawable.ic_flag
+                }
+                imageViewCourseFlag.setImageResource(drawableResId)
 
                 itemView.setOnClickListener {
                     adItemClickListener.onCourseClick(courses)
+                }
+
+                imageViewCourseFlag.setOnClickListener {
+                    adItemClickListener.onFavClick(courses)
                 }
 
             }
@@ -53,7 +58,8 @@ abstract class BaseCourseAdapter<VH : BaseCourseAdapter.BaseCourseViewHolder>(
         parent: ViewGroup,
         viewType: Int,
     ): VH {
-        val binding = ItemCourseListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCourseListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return getViewHolder(binding, courseItemClickListener)
     }
 

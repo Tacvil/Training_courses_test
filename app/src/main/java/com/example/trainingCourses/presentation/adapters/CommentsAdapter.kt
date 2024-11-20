@@ -5,11 +5,12 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trainingCourses.databinding.ItemCommentsBinding
-import com.example.trainingCourses.presentation.fragment.Comment
+import com.example.trainingCourses.domain.model.Comment
 import com.example.trainingCourses.presentation.utils.PagingCommentsDiffCallback
 import jakarta.inject.Inject
 
-class CommentsAdapter @Inject constructor() : PagingDataAdapter<Comment, CommentsAdapter.CommentViewHolder>(PagingCommentsDiffCallback) {
+class CommentsAdapter @Inject constructor() :
+    PagingDataAdapter<Comment, CommentsAdapter.CommentViewHolder>(PagingCommentsDiffCallback) {
 
     class CommentViewHolder(private val binding: ItemCommentsBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -21,7 +22,8 @@ class CommentsAdapter @Inject constructor() : PagingDataAdapter<Comment, Comment
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-        val binding = ItemCommentsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemCommentsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CommentViewHolder(binding)
     }
 

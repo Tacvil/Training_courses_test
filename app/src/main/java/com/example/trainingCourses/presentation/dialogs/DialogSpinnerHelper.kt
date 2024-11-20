@@ -1,9 +1,6 @@
 package com.example.trainingCourses.presentation.dialogs
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.InsetDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trainingCourses.R
 import com.example.trainingCourses.presentation.adapters.RcViewDialogSpinnerAdapter
-import jakarta.inject.Inject
-import timber.log.Timber
 
 object DialogSpinnerHelper {
     fun showDialogSpinner(
@@ -25,15 +20,16 @@ object DialogSpinnerHelper {
         onItemSelectedListener: RcViewDialogSpinnerAdapter.OnItemSelectedListener? = null
     ) {
         val spinnerLayout = LayoutInflater.from(context).inflate(R.layout.spinner_layout, null)
-        val recyclerViewItems = spinnerLayout.findViewById<RecyclerView>(R.id.recycler_view_spinner_items).apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = RcViewDialogSpinnerAdapter(targetTextView, onItemSelectedListener)
-        }
+        val recyclerViewItems =
+            spinnerLayout.findViewById<RecyclerView>(R.id.recycler_view_spinner_items).apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = RcViewDialogSpinnerAdapter(targetTextView, onItemSelectedListener)
+            }
 
         val popupWindow = PopupWindow(
             spinnerLayout,
-            anchorView.width, // Ширина равна ширине anchorView
-            ViewGroup.LayoutParams.WRAP_CONTENT // Высота подстраивается под содержимое
+            anchorView.width,
+            ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply {
             isOutsideTouchable = true
             setOnDismissListener {
@@ -45,9 +41,9 @@ object DialogSpinnerHelper {
 
         val yOffset = anchorView.resources.getDimensionPixelSize(R.dimen.popup_offset_y)
         popupWindow.showAsDropDown(anchorView, 0, yOffset)
-        popupWindow.isFocusable = true // Устанавливаем фокус
-        popupWindow.update() // Обновляем PopupWindow
+        popupWindow.isFocusable = true
+        popupWindow.update()
 
         (recyclerViewItems.adapter as? RcViewDialogSpinnerAdapter)?.updateItems(spinnerItems)
     }
-    }
+}

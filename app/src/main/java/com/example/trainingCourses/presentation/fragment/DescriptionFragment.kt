@@ -2,50 +2,39 @@ package com.example.trainingCourses.presentation.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.launch
 import androidx.core.text.HtmlCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.trainingCourses.R
 import com.example.trainingCourses.databinding.FragmentDescriptionBinding
-import com.example.trainingCourses.databinding.FragmentMainBinding
 import com.example.trainingCourses.domain.model.Courses
+import com.example.trainingCourses.presentation.activities.MainActivity.Companion.COURSE_BUNDLE
 import com.example.trainingCourses.presentation.adapters.CommentsAdapter
-import com.example.trainingCourses.presentation.adapters.CoursesAdapter
-import com.example.trainingCourses.presentation.utils.TimeUtils
+import com.example.trainingCourses.domain.utils.TimeUtils
 import com.example.trainingCourses.presentation.viewModel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Locale
-import kotlin.text.format
-import kotlin.text.isLowerCase
-import kotlin.text.replaceFirstChar
-import kotlin.text.titlecase
 
 @AndroidEntryPoint
 class DescriptionFragment : Fragment() {
     private var _binding: FragmentDescriptionBinding? = null
-    val binding get() = _binding!!
+    private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by activityViewModels()
 
-    private var canonicalUrl:String? = null
-    private var courseId:Int? = null
+    private var canonicalUrl: String? = null
+    private var courseId: Int? = null
 
     @Inject
     lateinit var commentsAdapter: CommentsAdapter
@@ -83,41 +72,48 @@ class DescriptionFragment : Fragment() {
 
     @SuppressLint("NewApi")
     private fun setupCourseData() {
-        val course = arguments?.getParcelable("course", Courses::class.java)
-        course?.let {
+        val course = arguments?.getParcelable(COURSE_BUNDLE, Courses::class.java)
+        course?.let { courses ->
             binding.textViewCourseTitle.text = course.title.toString()
-            binding.textViewAuthorName.text = it.full_name.toString()
-            // Загрузка картинки с помощью Glide
+            binding.textViewAuthorName.text = courses.full_name.toString()
+
             binding.imageViewCourseCover.let { imageView ->
                 Glide.with(this)
-                    .load(it.cover)
+                    .load(courses.cover)
                     .into(imageView)
             }
 
-            binding.imageViewAuthorAvatar.let{ imageView ->
+            binding.imageViewAuthorAvatar.let { imageView ->
                 Glide.with(this)
-                    .load(it.avatar)
+                    .load(courses.avatar)
                     .into(imageView)
             }
 
-            binding.textViewRatingValue.text = it.score.toString()
-            binding.textViewCourseDate.text = it.create_date?.let { date ->
+            binding.textViewRatingValue.text = courses.score.toString()
+            binding.textViewCourseDate.text = courses.create_date?.let { date ->
                 TimeUtils.formatDate(date)
             }
 
-            binding.textViewCourseDuration.text = it.time_to_complete?.let { duration ->
+            binding.textViewCourseDuration.text = courses.time_to_complete?.let { duration ->
                 formatDuration(duration)
             }
 
-            canonicalUrl = it.canonical_url
+            canonicalUrl = courses.canonical_url
 
-            binding.textViewCourseDescription.text = it.description?.let { description ->
+            binding.textViewCourseDescription.text = courses.description?.let { description ->
                 HtmlCompat.fromHtml(
                     description,
-                    HtmlCompat.FROM_HTML_MODE_COMPACT)
+                    HtmlCompat.FROM_HTML_MODE_COMPACT
+                )
             }
 
-            courseId = it.id
+            if (courses.isFavorite){
+                binding.imageViewFlag.setImageResource(R.drawable.ic_flag_fill_green)
+            }
+
+            binding.imageViewFlag.setOnClickListener { addToFav(courses) }
+
+            courseId = courses.id
 
         }
     }
@@ -128,6 +124,18 @@ class DescriptionFragment : Fragment() {
         }
         binding.buttonStartCourse.setOnClickListener { openLinkPlatform() }
         binding.buttonGoToPlatform.setOnClickListener { openLinkPlatform() }
+
+    }
+
+    private fun addToFav(courses: Courses) {
+        if (courses.isFavorite){
+            binding.imageViewFlag.setImageResource(R.drawable.ic_flag2)
+        }else{
+            binding.imageViewFlag.setImageResource(R.drawable.ic_flag_fill_green)
+        }
+        lifecycleScope.launch {
+            viewModel.toggleFavorite(courses)
+        }
     }
 
     private fun openLinkPlatform() {
@@ -149,11 +157,3 @@ class DescriptionFragment : Fragment() {
         _binding = null
     }
 }
-
-data class Comment(
-    val id: Int,
-    val user: String,
-    val score: String,
-    val text: String,
-    val full_name: String,
-)

@@ -2,6 +2,8 @@ package com.example.trainingCourses.domain.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.example.trainingCourses.data.local.entity.CourseEntity
+import com.example.trainingCourses.data.local.entity.FavoriteCourseEntity
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,6 +22,7 @@ constructor(
     val canonical_url: String? = null,
     val description: String? = null,
     val avatar: String? = null,
+    var isFavorite: Boolean = false
 
 ) : Parcelable {
     override fun describeContents(): Int = 0
@@ -62,3 +65,4 @@ constructor(
         override fun newArray(size: Int): Array<Courses?> = arrayOfNulls(size)
     }
 }
+

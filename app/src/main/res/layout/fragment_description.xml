@@ -2,10 +2,9 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/scroll_container"
-    xmlns:tools="http://schemas.android.com/tools"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintTop_toTopOf="parent">
 
@@ -20,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/cover1"
+            android:src="@drawable/cover_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,11 +32,11 @@
             android:layout_marginTop="56dp"
             android:background="@drawable/button_background"
             android:backgroundTint="@color/white"
-            android:padding="15dp"
             android:clickable="true"
             android:focusable="true"
+            android:padding="15dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/arrov_back"
+            android:src="@drawable/ic_arrow_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,8 +49,10 @@
             android:background="@drawable/button_background"
             android:backgroundTint="@color/white"
             android:padding="14dp"
+            android:clickable="true"
+            android:focusable="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/flag2"
+            android:src="@drawable/ic_flag2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -78,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="4dp"
-                    android:src="@drawable/star">
+                    android:src="@drawable/ic_star">
 
                 </ImageView>
 
@@ -115,14 +116,14 @@
                 android:id="@+id/linear_layout_course_duration_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/background_rating">
+                android:background="@drawable/background_rating"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/image_view_clock"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/baseline_access_time_24">
+                    android:src="@drawable/ic_time_durations">
 
                 </ImageView>
 
@@ -221,7 +222,7 @@
                 android:fontFamily="@font/roboto"
                 android:text="Начать курс"
                 android:textColor="@color/white"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/button_go_to_platform"
@@ -255,17 +256,17 @@
                 android:fontFamily="@font/roboto"
                 android:text="О курсе"
                 android:textColor="@color/white"
-                android:textSize="22sp"/>
+                android:textSize="22sp" />
 
             <TextView
                 android:id="@+id/text_view_course_description"
-                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:alpha="0.7"
                 android:text="У вас будет 7 видеоуроков в высоком качестве. На них спикер объясняет теорию и показывает как выполнять практические задания. Доступ к материалам сохраняется на 2 года. \n\nКроме теоретических материалов вас ждут тесты и практические задания. Они помогут лучше запомнить новую информацию и прокачать навыки, которые необходимы для реальной работы с RabbitMQ."
                 android:textColor="@color/white"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -287,16 +288,14 @@
                 android:fontFamily="@font/roboto"
                 android:text="Комментарии"
                 android:textColor="@color/white"
-                android:textSize="22sp"/>
+                android:textSize="22sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_comments"
-                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </androidx.recyclerview.widget.RecyclerView>
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"></androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

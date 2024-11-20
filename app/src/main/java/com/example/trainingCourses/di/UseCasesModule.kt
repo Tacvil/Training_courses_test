@@ -2,6 +2,7 @@ package com.example.trainingCourses.di
 
 import com.example.trainingCourses.domain.model.UseCases
 import com.example.trainingCourses.domain.useCases.dataRetrieval.GetCommentsCourseUseCase
+import com.example.trainingCourses.domain.useCases.dataRetrieval.GetFavoriteCoursesUseCase
 import com.example.trainingCourses.domain.useCases.dataRetrieval.GetHomeCoursesUseCase
 import com.example.trainingCourses.domain.useCases.filters.AddToFilterUseCase
 import com.example.trainingCourses.domain.useCases.filters.GetFilterValueUseCase
@@ -19,7 +20,8 @@ object UseCasesModule {
     fun provideDataRetrievalUseCases(
         getHomeAdsUseCase: GetHomeCoursesUseCase,
         getCommentsCourseUseCase: GetCommentsCourseUseCase,
-    ): UseCases.DataRetrieval = UseCases.DataRetrieval(getHomeAdsUseCase, getCommentsCourseUseCase)
+        getFavoriteCoursesUseCase: GetFavoriteCoursesUseCase,
+    ): UseCases.DataRetrieval = UseCases.DataRetrieval(getHomeAdsUseCase, getCommentsCourseUseCase, getFavoriteCoursesUseCase)
 
 
     @Provides

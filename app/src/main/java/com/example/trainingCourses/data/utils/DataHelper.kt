@@ -1,4 +1,4 @@
-package com.example.trainingCourses.presentation.utils
+package com.example.trainingCourses.data.utils
 
 import android.annotation.SuppressLint
 import java.time.Instant

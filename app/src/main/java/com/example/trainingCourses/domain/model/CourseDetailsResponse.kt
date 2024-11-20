@@ -1,3 +1,6 @@
 package com.example.trainingCourses.domain.model
 
-data class CourseDetailsResponse()
+data class CourseDetailsResponse(
+    val meta: Meta,
+    val courses: List<Courses>
+)

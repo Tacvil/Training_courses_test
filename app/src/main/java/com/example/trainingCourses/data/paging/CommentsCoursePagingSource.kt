@@ -2,9 +2,8 @@ package com.example.trainingCourses.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.trainingCourses.domain.model.Comment
 import com.example.trainingCourses.domain.repository.CoursesRepository
-import com.example.trainingCourses.presentation.fragment.Comment
-import timber.log.Timber
 
 class CommentsCoursePagingSource(
     private val coursesRepository: CoursesRepository,

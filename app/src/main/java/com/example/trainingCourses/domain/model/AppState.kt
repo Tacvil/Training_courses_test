@@ -1,6 +1,9 @@
 package com.example.trainingCourses.domain.model
 
 data class AppState(
-    //val adEvent: AdUpdateEvent? = null,
+    val courseEvent: CourseUpdateEvent? = null,
     val filter: MutableMap<String, String> = mutableMapOf(),
 )
+
+
+

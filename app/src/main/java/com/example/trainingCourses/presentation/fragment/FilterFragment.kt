@@ -8,13 +8,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import com.example.trainingCourses.R
-import com.example.trainingCourses.data.utils.SortOption
 import com.example.trainingCourses.data.utils.SortUtils
 import com.example.trainingCourses.databinding.FragmentFilterBinding
 import com.example.trainingCourses.domain.api.ApiService.Companion.COURSE_LISTS_QUERY_PARAM
 import com.example.trainingCourses.domain.api.ApiService.Companion.DIFFICULTY_QUERY_PARAM
 import com.example.trainingCourses.domain.api.ApiService.Companion.IS_PAID_QUERY_PARAM
-import com.example.trainingCourses.domain.model.Courses
 import com.example.trainingCourses.presentation.adapters.RcViewDialogSpinnerAdapter
 import com.example.trainingCourses.presentation.dialogs.DialogSpinnerHelper
 import com.example.trainingCourses.presentation.viewModel.MainViewModel
@@ -25,117 +23,131 @@ import jakarta.inject.Inject
 
 @AndroidEntryPoint
 class FilterFragment
+@Inject
+constructor(
+) : BottomSheetDialogFragment() {
+    private val viewModel: MainViewModel by activityViewModels()
+    private var _binding: FragmentFilterBinding? = null
+    private val binding get() = _binding!!
+
     @Inject
-    constructor(
-    ) : BottomSheetDialogFragment() {
-        private val viewModel: MainViewModel by activityViewModels()
-        private var _binding: FragmentFilterBinding? = null
-        val binding get() = _binding!!
+    lateinit var sortUtils: SortUtils
 
-        @Inject
-        lateinit var sortUtils: SortUtils
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = FragmentFilterBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?,
-        ): View {
-            _binding = FragmentFilterBinding.inflate(inflater, container, false)
-            return binding.root
-        }
+    @SuppressLint("NewApi")
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
+        super.onViewCreated(view, savedInstanceState)
 
-        @SuppressLint("NewApi")
-        override fun onViewCreated(
-            view: View,
-            savedInstanceState: Bundle?,
-        ) {
-            super.onViewCreated(view, savedInstanceState)
+        val bottomSheetBehavior = BottomSheetBehavior.from(view.parent as View)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        getFilter()
+        setupSelectors()
+        onClickApplyFilters()
+        onClickClear()
+    }
 
-            val bottomSheetBehavior = BottomSheetBehavior.from(view.parent as View)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            getFilter()
-            setupSelectors()
-            onClickApplyFilters()
-            onClickClear()
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
-        override fun onDestroyView() {
-            super.onDestroyView()
-            _binding = null
-        }
+    private fun getFilter() = with(binding) {
+        viewModel.getFilterValue(COURSE_LISTS_QUERY_PARAM)
+            ?.let { selectCategoryEditText.setText(sortUtils.getCategoryOptionFromSortOption(it)) }
+        viewModel.getFilterValue(DIFFICULTY_QUERY_PARAM)
+            ?.let { selectDifficultEditText.setText(sortUtils.getDifficultOptionFromSortOption(it)) }
+        viewModel.getFilterValue(IS_PAID_QUERY_PARAM)
+            ?.let { selectPriceEditText.setText(sortUtils.getPriceOptionFromSortOption(it)) }
+    }
 
-        private fun getFilter() = with(binding) {
-                viewModel.getFilterValue(COURSE_LISTS_QUERY_PARAM)?.let { selectCategoryEditText.setText(sortUtils.getCategoryOptionFromSortOption(it)) }
-                viewModel.getFilterValue(DIFFICULTY_QUERY_PARAM)?.let { selectDifficultEditText.setText(sortUtils.getDifficultOptionFromSortOption(it)) }
-                viewModel.getFilterValue(IS_PAID_QUERY_PARAM)?.let { selectPriceEditText.setText(sortUtils.getPriceOptionFromSortOption(it)) }
-            }
+    private fun setupSelectors() =
+        with(binding) {
 
-        private fun setupSelectors() =
-            with(binding) {
-
-                selectCategoryEditText.setOnClickListener {
-                    val categoryOptionsList = arrayListOf(
-                            getString(R.string.category_android_development),
-                            getString(R.string.category_ux_ui_design),
-                                getString(R.string.category_android),
-                                getString(R.string.category_kotlin),
-                                getString(R.string.category_mobile_development),
-                                getString(R.string.category_app_development),
-                        )
-                    showSpinnerPopup(selectCategoryEditText, categoryOptionsList) {
-                        selectCategoryEditText.setText(it)
-                    }
-                }
-
-                selectDifficultEditText.setOnClickListener {
-                    val categoryDifficultList = arrayListOf(
-                        getString(R.string.difficulty_easy),
-                        getString(R.string.difficulty_medium),
-                        getString(R.string.difficulty_hard),
-                    )
-                    showSpinnerPopup(selectDifficultEditText, categoryDifficultList) {
-                        selectDifficultEditText.setText(it)
-                    }
+            selectCategoryEditText.setOnClickListener {
+                val categoryOptionsList = arrayListOf(
+                    getString(R.string.category_android_development),
+                    getString(R.string.category_ux_ui_design),
+                    getString(R.string.category_android),
+                    getString(R.string.category_kotlin),
+                    getString(R.string.category_mobile_development),
+                    getString(R.string.category_app_development),
+                )
+                showSpinnerPopup(selectCategoryEditText, categoryOptionsList) {
+                    selectCategoryEditText.setText(it)
                 }
             }
 
-        private fun showSpinnerPopup(
-            textView: TextView,
-            items: ArrayList<String>,
-            onItemSelected: (String) -> Unit,
-        ) {
-            DialogSpinnerHelper.showDialogSpinner(
-                requireContext(),
-                textView,
-                items,
-                textView,
-                object : RcViewDialogSpinnerAdapter.OnItemSelectedListener {
-                    override fun onItemSelected(item: String) {
-                        onItemSelected(item)
-                    }
-                },
-            )
+            selectDifficultEditText.setOnClickListener {
+                val categoryDifficultList = arrayListOf(
+                    getString(R.string.difficulty_easy),
+                    getString(R.string.difficulty_medium),
+                    getString(R.string.difficulty_hard),
+                )
+                showSpinnerPopup(selectDifficultEditText, categoryDifficultList) {
+                    selectDifficultEditText.setText(it)
+                }
+            }
+
+            selectPriceEditText.setOnClickListener {
+                val categoryDifficultList = arrayListOf(
+                    getString(R.string.price_free),
+                    getString(R.string.price_paid),
+                    getString(R.string.price_no_matter),
+                )
+                showSpinnerPopup(selectPriceEditText, categoryDifficultList) {
+                    selectPriceEditText.setText(it)
+                }
+            }
         }
 
-        private fun onClickApplyFilters() =
-            with(binding) {
-                applyFilterButton.setOnClickListener {
-                    createFilter()
-                    dismiss()
+    private fun showSpinnerPopup(
+        textView: TextView,
+        items: ArrayList<String>,
+        onItemSelected: (String) -> Unit,
+    ) {
+        DialogSpinnerHelper.showDialogSpinner(
+            requireContext(),
+            textView,
+            items,
+            textView,
+            object : RcViewDialogSpinnerAdapter.OnItemSelectedListener {
+                override fun onItemSelected(item: String) {
+                    onItemSelected(item)
                 }
-            }
+            },
+        )
+    }
 
-        private fun onClickClear() =
-            with(binding) {
-                clearFilterButton.setOnClickListener {
-                    selectCategoryEditText.setText(EMPTY_STRING)
-                    selectDifficultEditText.setText(EMPTY_STRING)
-                    selectPriceEditText.setText(EMPTY_STRING)
-                    selectCategoryTextInputLayout.hint = getString(R.string.filter_hint_category)
-                    selectDifficultTextInputLayout.hint = getString(R.string.filter_hint_difficult)
-                    selectPriceTextInputLayout.hint = getString(R.string.filter_hint_price)
-                }
+    private fun onClickApplyFilters() =
+        with(binding) {
+            applyFilterButton.setOnClickListener {
+                createFilter()
+                dismiss()
             }
+        }
+
+    private fun onClickClear() =
+        with(binding) {
+            clearFilterButton.setOnClickListener {
+                selectCategoryEditText.setText(EMPTY_STRING)
+                selectDifficultEditText.setText(EMPTY_STRING)
+                selectPriceEditText.setText(EMPTY_STRING)
+                selectCategoryTextInputLayout.hint = getString(R.string.filter_hint_category)
+                selectDifficultTextInputLayout.hint = getString(R.string.filter_hint_difficult)
+                selectPriceTextInputLayout.hint = getString(R.string.filter_hint_price)
+            }
+        }
 
     private fun createFilter() {
         with(binding) {
@@ -148,15 +160,16 @@ class FilterFragment
                 filters[DIFFICULTY_QUERY_PARAM] = sortUtils.getDifficultOption(it)
             }
             selectPriceEditText.text.toString().let {
-                if (it != getString(R.string.price_no_matter)) filters[IS_PAID_QUERY_PARAM] =  sortUtils.getPriceOption(it)
+                if (it != getString(R.string.price_no_matter)) filters[IS_PAID_QUERY_PARAM] =
+                    sortUtils.getPriceOption(it)
             }
 
             viewModel.updateFilters(filters)
         }
     }
 
-        companion object {
-            const val FILTER_FRAGMENT_TAG = "FilterFragment"
-            const val EMPTY_STRING = ""
-        }
+    companion object {
+        const val FILTER_FRAGMENT_TAG = "FilterFragment"
+        const val EMPTY_STRING = ""
     }
+}

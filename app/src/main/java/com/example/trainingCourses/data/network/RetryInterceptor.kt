@@ -6,7 +6,6 @@ import timber.log.Timber
 import java.io.IOException
 import java.net.SocketTimeoutException
 import kotlin.math.pow
-import kotlin.text.toLong
 
 class RetryInterceptor(private val maxRetries: Int = 3) : Interceptor {
 
@@ -22,7 +21,6 @@ class RetryInterceptor(private val maxRetries: Int = 3) : Interceptor {
                 Timber.w(e, "Request timed out, retrying...")
                 tryCount++
                 if (tryCount < maxRetries) {
-                    // Экспоненциальная выдержка
                     Thread.sleep((2.0.pow(tryCount) * 1000).toLong())
                 }
             }

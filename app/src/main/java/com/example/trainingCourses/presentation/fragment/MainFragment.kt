@@ -13,8 +13,6 @@ import com.example.trainingCourses.R
 import com.example.trainingCourses.data.utils.SortOption
 import com.example.trainingCourses.databinding.FragmentMainBinding
 import com.example.trainingCourses.domain.api.ApiService.Companion.ORDER_QUERY_PARAM
-import com.example.trainingCourses.domain.model.Courses
-import com.example.trainingCourses.domain.ui.course.CourseItemClickListener
 import com.example.trainingCourses.presentation.adapters.CoursesAdapter
 import com.example.trainingCourses.presentation.dialogs.OrderByFilterDialogManager
 import com.example.trainingCourses.presentation.viewModel.MainViewModel
@@ -89,6 +87,5 @@ class MainFragment @Inject constructor() : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
 }

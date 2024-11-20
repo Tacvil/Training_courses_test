@@ -3,30 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:title="Аккаунт"
-        android:icon="@drawable/account"
-        android:iconTint="@color/color_selector"
-        android:titleTextColor="@color/color_selector"
         android:id="@+id/id_account"
+        android:icon="@drawable/ic_account"
+        android:iconTint="@color/color_selector"
         android:orderInCategory="300"
+        android:title="Аккаунт"
+        android:titleTextColor="@color/color_selector"
         app:showAsAction="always" />
 
     <item
-        android:title="Избранные"
-        android:icon="@drawable/flag1"
-        android:iconTint="@color/color_selector"
-        android:titleTextColor="@color/color_selector"
         android:id="@+id/id_favs"
+        android:icon="@drawable/ic_flag1"
+        android:iconTint="@color/color_selector"
         android:orderInCategory="200"
-        app:showAsAction="always"/>
+        android:title="Избранные"
+        android:titleTextColor="@color/color_selector"
+        app:showAsAction="always" />
 
     <item
-        android:title="Главная"
-        android:icon="@drawable/home"
-        android:iconTint="@color/color_selector"
-        android:titleTextColor="@color/color_selector"
         android:id="@+id/id_home"
+        android:icon="@drawable/ic_home"
+        android:iconTint="@color/color_selector"
         android:orderInCategory="100"
-        app:showAsAction="always"/>
+        android:title="Главная"
+        android:titleTextColor="@color/color_selector"
+        app:showAsAction="always" />
 
 </menu>

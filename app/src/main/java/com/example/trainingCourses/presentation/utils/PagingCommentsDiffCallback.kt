@@ -1,8 +1,7 @@
 package com.example.trainingCourses.presentation.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.trainingCourses.domain.model.Courses
-import com.example.trainingCourses.presentation.fragment.Comment
+import com.example.trainingCourses.domain.model.Comment
 
 object PagingCommentsDiffCallback : DiffUtil.ItemCallback<Comment>() {
     override fun areItemsTheSame(

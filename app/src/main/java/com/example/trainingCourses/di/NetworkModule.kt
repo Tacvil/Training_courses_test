@@ -5,9 +5,7 @@ import com.example.trainingCourses.domain.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -21,11 +19,11 @@ object NetworkModule {
 
     fun provideOkHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY // Логировать тело запроса и ответа
+            level = HttpLoggingInterceptor.Level.BODY
         }
         return OkHttpClient.Builder()
             .addInterceptor(RetryInterceptor())
-            .addInterceptor(loggingInterceptor) // Добавляем loggingInterceptor
+            .addInterceptor(loggingInterceptor)
             .build()
     }
 
@@ -34,7 +32,7 @@ object NetworkModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://stepik.org/api/")
-            .client(okHttpClient) // Использовать созданный OkHttpClient
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

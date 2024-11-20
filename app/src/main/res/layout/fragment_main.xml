@@ -41,7 +41,7 @@
                         android:hint="Search courses..."
                         android:visibility="visible"
                         app:layout_collapseMode="pin"
-                        app:navigationIcon="@drawable/search_local"
+                        app:navigationIcon="@drawable/ic_search_local"
                         app:tintNavigationIcon="@android:color/transparent" />
 
                     <ImageView
@@ -50,13 +50,13 @@
                         android:layout_height="56dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:clickable="true"
                         android:layout_marginBottom="16dp"
                         android:background="@drawable/round_button_background"
                         android:backgroundTint="@color/dark_grey"
+                        android:clickable="true"
                         android:focusable="true"
                         android:padding="17dp"
-                        android:src="@drawable/vector"
+                        android:src="@drawable/ic_order"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -73,10 +73,10 @@
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="3dp"
+                        android:clickable="true"
                         android:focusable="true"
                         android:gravity="end"
                         android:text="По популярности"
-                        android:clickable="true"
                         android:textColor="@color/green" />
 
                     <ImageView
@@ -84,7 +84,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:src="@drawable/sort"/>
+                        android:src="@drawable/ic_sort" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -104,8 +104,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_courses"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

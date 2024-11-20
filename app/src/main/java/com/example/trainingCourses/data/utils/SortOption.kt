@@ -20,5 +20,4 @@ enum class SortOption(
 
     IS_PAID_TRUE("true"),
     IS_PAID_FALSE("false"),
-
 }

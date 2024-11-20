@@ -2,26 +2,37 @@ package com.example.trainingCourses.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.trainingCourses.domain.repository.CoursesRepository
-import com.example.trainingCourses.presentation.fragment.Comment
-import timber.log.Timber
+import com.example.trainingCourses.data.local.FavoriteCoursesDao
+import com.example.trainingCourses.domain.model.Courses
+import com.example.trainingCourses.domain.utils.CourseMappers.toCourses
 
-class CommentsCoursePagingSource(
-    private val coursesRepository: CoursesRepository,
-    private val courseId: Int,
-) : PagingSource<Int, Comment>() {
+class FavoritesCoursePagingSource(
+    private val favoriteCoursesDao: FavoriteCoursesDao
+) : PagingSource<Int, Courses>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Comment> =
-        try {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Courses> {
+        return try {
             val page = params.key ?: 1
-            val response = coursesRepository.getCommentsFromApi(courseId, page)
-            val commentsList = response.comments
-            val nextKey = if (response.meta.has_next) page + 1 else null
+            val pageSize = params.loadSize
+            val offset = (page - 1) * pageSize
 
-            LoadResult.Page(commentsList, null, nextKey)
+            val favoriteCourses = favoriteCoursesDao.getFavoriteCourses(pageSize, offset)
+                .map { it.toCourses() }
+
+            LoadResult.Page(
+                data = favoriteCourses,
+                prevKey = if (page == 1) null else page - 1,
+                nextKey = if (favoriteCourses.isEmpty()) null else page + 1
+            )
         } catch (e: Exception) {
             LoadResult.Error(e)
         }
+    }
 
-    override fun getRefreshKey(state: PagingState<Int, Comment>): Int = 1
+    override fun getRefreshKey(state: PagingState<Int, Courses>): Int? {
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+        }
+    }
 }

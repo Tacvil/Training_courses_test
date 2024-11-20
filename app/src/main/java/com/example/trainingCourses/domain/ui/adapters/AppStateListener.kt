@@ -1,7 +1,8 @@
-package com.example.bulletin_board.domain.ui.adapters
+package com.example.trainingCourses.domain.ui.adapters
 
-import com.example.bulletin_board.domain.model.AdUpdateEvent
+import com.example.trainingCourses.domain.model.CourseUpdateEvent
+
 
 interface AppStateListener {
-    fun onAppStateEvent(adEvent: (AdUpdateEvent) -> Unit)
+    fun onAppStateEvent(courseEvent: (CourseUpdateEvent) -> Unit)
 }

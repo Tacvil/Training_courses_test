@@ -1,9 +1,8 @@
-package com.example.trainingCourses.presentation.utils
+package com.example.trainingCourses.data.network
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.core.content.getSystemService
 
 object InternetConnectionManager {
 

@@ -1,13 +1,20 @@
 package com.example.trainingCourses.data.datasource
 
+
+import com.example.trainingCourses.data.utils.DataHelper.parseDateToMillis
 import com.example.trainingCourses.domain.api.ApiService
 import com.example.trainingCourses.domain.api.ApiService.Companion.COURSE_LISTS_QUERY_PARAM
 import com.example.trainingCourses.domain.api.ApiService.Companion.DIFFICULTY_QUERY_PARAM
 import com.example.trainingCourses.domain.api.ApiService.Companion.IS_PAID_QUERY_PARAM
 import com.example.trainingCourses.domain.api.ApiService.Companion.ORDER_QUERY_PARAM
-import com.example.trainingCourses.domain.api.CommentsCourseResponse
-import com.example.trainingCourses.domain.api.CoursesResponse
-import com.example.trainingCourses.presentation.utils.DataHelper.parseDateToMillis
+import com.example.trainingCourses.domain.model.CommentsCourseResponse
+import com.example.trainingCourses.domain.model.CourseDetailsResponse
+import com.example.trainingCourses.domain.model.CourseReview
+import com.example.trainingCourses.domain.model.CourseReviewsResponse
+import com.example.trainingCourses.domain.model.Courses
+import com.example.trainingCourses.domain.model.CoursesResponse
+import com.example.trainingCourses.domain.model.SearchResultsResponse
+import com.example.trainingCourses.domain.model.UserResponse
 import jakarta.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -20,26 +27,52 @@ constructor(
     private val apiService: ApiService
 
 ) {
-
     suspend fun getCoursesFromApi(
         filter: MutableMap<String, String>,
         page: Int,
     ): CoursesResponse = coroutineScope {
+        val searchResultsResponse = fetchSearchResults(filter, page)
+        val originalCourseIds = searchResultsResponse.searchResults.map { it.course }
+        val authorIds = searchResultsResponse.searchResults.mapNotNull { it.course_authors?.firstOrNull() }
 
-        val searchResultsResponse = apiService.searchCourses(
+        val coursesByIds = fetchCoursesByIds(originalCourseIds)
+        val reviewsResponses = fetchCourseReviews(originalCourseIds)
+        val usersResponses = fetchUsersData(authorIds)
+
+        val coursesMap = coursesByIds.courses.associateBy { it.id }
+        val reviewsMap = buildReviewsMap(reviewsResponses)
+        val usersMap = usersResponses.filterNotNull().associateBy { it.users.firstOrNull()?.id }
+
+        val orderedCourses = assembleCourses(
+            originalCourseIds,
+            searchResultsResponse,
+            coursesMap,
+            reviewsMap,
+            usersMap
+        )
+
+        CoursesResponse(searchResultsResponse.meta, orderedCourses)
+    }
+
+    private suspend fun fetchSearchResults(
+        filter: MutableMap<String, String>,
+        page: Int
+    ): SearchResultsResponse {
+        return apiService.searchCourses(
             page = page,
             order = filter[ORDER_QUERY_PARAM].toString(),
             courseLists = filter[COURSE_LISTS_QUERY_PARAM]?.takeIf { it.isNotBlank() }?.toInt(),
             difficulty = filter[DIFFICULTY_QUERY_PARAM]?.takeIf { it.isNotBlank() },
-            isPaid = filter[IS_PAID_QUERY_PARAM]?.takeIf { it.isNotBlank() }
-                ?.toBooleanStrictOrNull()
+            isPaid = filter[IS_PAID_QUERY_PARAM]?.takeIf { it.isNotBlank() }?.toBooleanStrictOrNull()
         )
-        val originalCourseIds = searchResultsResponse.searchResults.map { it.course }
+    }
 
-        val authorIds = searchResultsResponse.searchResults.mapNotNull { it.course_authors?.firstOrNull() }
+    private suspend fun fetchCoursesByIds(originalCourseIds: List<Int>): CourseDetailsResponse {
+        return apiService.getCoursesByIds(originalCourseIds)
+    }
 
-        val coursesDeferred = async { apiService.getCoursesByIds(originalCourseIds) }
-        val reviewsDeferred = originalCourseIds.map { courseId ->
+    private suspend fun fetchCourseReviews(originalCourseIds: List<Int>): List<CourseReviewsResponse?> = coroutineScope {
+        originalCourseIds.map { courseId ->
             async {
                 try {
                     apiService.getCourseReviews(courseId)
@@ -48,47 +81,41 @@ constructor(
                     null
                 }
             }
-        }
+        }.awaitAll()
+    }
 
-        val usersDeferred = authorIds.map { authorId ->
+    private suspend fun fetchUsersData(authorIds: List<Int?>): List<UserResponse?> = coroutineScope {
+        authorIds.map { authorId ->
             async {
                 try {
-                    apiService.getUser(authorId).users.firstOrNull()
+                    authorId?.let { apiService.getUser(it)}
                 } catch (e: Exception) {
                     Timber.e(e, "Error getting user data")
                     null
                 }
             }
-        }
+        }.awaitAll()
+    }
 
-        val coursesByIds = coursesDeferred.await()
-        val reviewsResponses = reviewsDeferred.awaitAll()
-        val usersResponses = usersDeferred.awaitAll()
+    private fun buildReviewsMap(reviewsResponses: List<CourseReviewsResponse?>): Map<Int, List<CourseReview>> {
+        return reviewsResponses.filterNotNull()
+            .flatMap { it.courseReviews }
+            .groupBy { it.course }
+    }
 
-        // Создание маппинга ID курса -> объект курса
-        val coursesMap = coursesByIds.courses.associateBy { it.id }
-        // Создание маппинга ID курса -> отзывы о курсе
-        val reviewsMap = reviewsResponses.filterNotNull()
-            .flatMap { it.courseReviews } // Получаем все отзывы
-            .groupBy { it.course } // Группируем отзывы по ID курса
-
-
-        // Создание маппинга ID автора -> данные автора
-        val usersMap = usersResponses.filterNotNull().associateBy { it.id }
-
-        // Восстановление порядка курсов и обновление данных
-        val orderedCourses = originalCourseIds.mapNotNull { courseId ->
+    private fun assembleCourses(
+        originalCourseIds: List<Int>,
+        searchResultsResponse: SearchResultsResponse,
+        coursesMap: Map<Int?, Courses>,
+        reviewsMap: Map<Int, List<CourseReview>>,
+        usersMap: Map<Int?, UserResponse>
+    ): List<Courses> {
+        return originalCourseIds.mapNotNull { courseId ->
             val course = coursesMap[courseId]
             if (course != null) {
                 val reviewsForCourse = reviewsMap[courseId]
-                val averageScore = reviewsForCourse?.sumOf { it.score }
-                    ?.div(reviewsForCourse.size.toDouble()) ?: 0.0
-
-                val formattedScore = if (averageScore.isNaN()) {
-                    0.0
-                } else {
-                    kotlin.math.round(averageScore * 10) / 10.0
-                }
+                val averageScore = calculateAverageScore(reviewsForCourse)
+                val formattedScore = formatScore(averageScore)
 
                 val authorId = searchResultsResponse.searchResults
                     .firstOrNull { it.course == courseId }
@@ -100,15 +127,26 @@ constructor(
                 course.copy(
                     create_date = course.create_date?.let { parseDateToMillis(it).toString() },
                     score = formattedScore,
-                    full_name = user?.full_name, // Получаем full_name из user
-                    avatar = user?.avatar // Получаем avatar из user
+                    full_name = user?.users?.firstOrNull()?.full_name,
+                    avatar = user?.users?.firstOrNull()?.avatar
                 )
             } else {
                 null
             }
         }
+    }
 
-        CoursesResponse(searchResultsResponse.meta, orderedCourses)
+    private fun calculateAverageScore(reviewsForCourse: List<CourseReview>?): Double {
+        return reviewsForCourse?.sumOf { it.score }
+            ?.div(reviewsForCourse.size.toDouble()) ?: 0.0
+    }
+
+    private fun formatScore(averageScore: Double): Double {
+        return if (averageScore.isNaN()) {
+            0.0
+        } else {
+            kotlin.math.round(averageScore * 10) / 10.0
+        }
     }
 
 
